@@ -13,9 +13,9 @@ type Range struct {
 }
 
 func Parse(size int64, str string) []Range {
-    rangeType := string([]byte(str)[:index])
-
     index := strings.IndexAny(str, "=")
+    rangeType := string([]byte(str)[:index])
+    
     if index == -1 {
         return []Range{Range{Type: rangeType, Start: 0, End: -2}}
     }
