@@ -1,25 +1,25 @@
-package rangeParser
+package RangeParser
 
 import (
     "strings"
     "strconv"
     "math"
-    // "fmt"
 )
 
 type Range struct {
     Type string
-    Start int
-    End int
+    Start int64
+    End int64
 }
 
-func rangeParser(size int, str string) []Range {
-    // result := Range{start: 0, end: 0}
-    index := strings.IndexAny(str, "=")
+func Parse(size int64, str string) []Range {
     rangeType := string([]byte(str)[:index])
+
+    index := strings.IndexAny(str, "=")
     if index == -1 {
         return []Range{Range{Type: rangeType, Start: 0, End: -2}}
     }
+
     // split the range string
     arr := strings.Split(strings.Trim(str, string([]byte(str)[:(index + 1)])), ",")
     var ranges []Range
@@ -27,8 +27,8 @@ func rangeParser(size int, str string) []Range {
     // parse all ranges
     for i := 0; i < len(arr); i++ {
         rng := strings.Split(arr[i], "-")
-        start, _ := strconv.Atoi(rng[0])
-        end, _ := strconv.Atoi(rng[1])
+        start, _ := strconv.ParseInt(rng[0], 10, 64)
+        end, _ := strconv.ParseInt(rng[1], 10, 64)
 
         // -nnn
         if math.IsNaN(float64(start)) == true {
@@ -59,8 +59,3 @@ func rangeParser(size int, str string) []Range {
 
     return []Range{Range{Type: rangeType, Start: 0, End: -1}}
 }
-
-// func main() {
-//     rng := rangeParser(1000, "bytes=40-80,-1")
-//     fmt.Println( rng[0].Type )
-// }
