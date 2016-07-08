@@ -27,30 +27,38 @@ func Parse(size int64, str string) []Range {
     // parse all ranges
     for i := 0; i < len(arr); i++ {
         rng := strings.Split(arr[i], "-")
-        start, _ := strconv.ParseInt(rng[0], 10, 64)
-        end, _ := strconv.ParseInt(rng[1], 10, 64)
+        
+        start, err := strconv.ParseFloat(rng[0], 64)
+        if err != nil {
+            start = math.NaN()
+        }
+
+        end, err := strconv.ParseFloat(rng[1], 64)
+        if err != nil {
+            end = math.NaN()
+        }
 
         // -nnn
-        if math.IsNaN(float64(start)) == true {
-            start = size - end
-            end = size - 1
+        if math.IsNaN(start) == true {
+            start = float64(size) - end
+            end = float64(size) - 1
         // nnn-
-        } else if math.IsNaN(float64(end)) == true {
-            end = size - 1
+        } else if math.IsNaN(end) == true {
+            end = float64(size) - 1
         }
 
         // limit last-byte-pos to current length
-        if end > size - 1 {
-            end = size - 1
+        if end > float64(size) - 1 {
+            end = float64(size) - 1
         }
 
         // invalid or unsatisifiable
-        if math.IsNaN(float64(start)) || math.IsNaN(float64(end)) || start > end || start < 0 {
+        if math.IsNaN(start) || math.IsNaN(end) || start > end || start < 0 {
             continue
         }
 
         // add range
-        ranges = append(ranges, Range{Type: rangeType, Start: start, End: end})
+        ranges = append(ranges, Range{ Type: rangeType, Start: int64(start), End: int64(end) })
     }
 
     if len(ranges) > 0 {
